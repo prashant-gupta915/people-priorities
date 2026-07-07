@@ -1,6 +1,6 @@
 import React from 'react';
 import Wizard from '@/components/citizen/Wizard';
-import Header from '@/components/layout/Header';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 export const metadata = {
   title: 'Citizen Portal | People Priority',
@@ -9,25 +9,21 @@ export const metadata = {
 
 export default function CitizenPage() {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex flex-col">
-      <Header />
-      
-      {/* Hero Section */}
-      <div className="bg-blue-600 dark:bg-blue-900 text-white py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            Report an Issue
+    <DashboardLayout>
+      <div className="flex flex-col items-center justify-center w-full max-w-3xl mx-auto pt-6 pb-20">
+        <div className="text-center space-y-3 mb-10">
+          <h1 className="text-3xl md:text-[32px] font-extrabold tracking-tight text-[#111827]">
+            Citizen Complaint Portal
           </h1>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-            Help us keep our city safe and clean. Use the wizard below to submit a detailed report, and we will direct it to the right department immediately.
+          <p className="text-[15px] text-[#6B7280]">
+            Submit your concern. AI will analyse and prioritise it instantly.
           </p>
         </div>
+        
+        <div className="w-full">
+          <Wizard />
+        </div>
       </div>
-
-      {/* Main Content */}
-      <main className="flex-1 -mt-8 px-4 pb-20">
-        <Wizard />
-      </main>
-    </div>
+    </DashboardLayout>
   );
 }

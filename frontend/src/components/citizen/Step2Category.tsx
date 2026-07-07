@@ -2,102 +2,90 @@
 
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import { motion } from 'framer-motion';
-import { FaRoad, FaTint, FaBolt, FaTrash, FaQuestionCircle } from 'react-icons/fa';
+import {
+  BeakerIcon,
+  TruckIcon,
+  HeartIcon,
+  AcademicCapIcon,
+  ArchiveBoxIcon,
+  BoltIcon,
+} from '@heroicons/react/24/outline';
+import type { ComplaintForm } from './Wizard';
 
-const categories = [
-  { id: 'Road', icon: FaRoad, label: 'Road' },
-  { id: 'Water', icon: FaTint, label: 'Water' },
-  { id: 'Electricity', icon: FaBolt, label: 'Electricity' },
-  { id: 'Waste', icon: FaTrash, label: 'Waste' },
-  { id: 'Other', icon: FaQuestionCircle, label: 'Other' },
+const CATEGORIES = [
+  { id: 'Water', label: 'Water Supply', icon: BeakerIcon, color: '#3B82F6' },
+  { id: 'Road', label: 'Roads & Transport', icon: TruckIcon, color: '#F59E0B' },
+  { id: 'Healthcare', label: 'Healthcare', icon: HeartIcon, color: '#EF4444' },
+  { id: 'Education', label: 'Education', icon: AcademicCapIcon, color: '#8B5CF6' },
+  { id: 'Waste', label: 'Sanitation', icon: ArchiveBoxIcon, color: '#10B981' },
+  { id: 'Electricity', label: 'Electricity', icon: BoltIcon, color: '#F59E0B' },
 ];
 
-const priorities = ['Low', 'Medium', 'High'];
-
 export default function Step2Category() {
-  const { control, formState: { errors } } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<ComplaintForm>();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
-    >
+    <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Category & Priority</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Select the type of issue and how urgent it is.
+        <h2 className="text-[22px] font-bold text-[#111827]">Select Issue Category</h2>
+        <p className="text-[15px] text-[#6B7280] mt-1">
+          What type of problem are you reporting?
         </p>
       </div>
 
-      <div className="space-y-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Category <span className="text-red-500">*</span>
-        </label>
-        <Controller
-          name="category"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categories.map((cat) => (
+      <Controller
+        name="category"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isSelected = value === cat.id;
+              return (
                 <button
                   key={cat.id}
                   type="button"
                   onClick={() => onChange(cat.id)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
-                    value === cat.id
-                      ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                  }`}
+                  className={`
+                    flex flex-col items-center justify-center gap-3 p-5 rounded-[16px] border-2 transition-all duration-200 text-center
+                    ${
+                      isSelected
+                        ? 'border-[#4F46E5] bg-[#EEF2FF] shadow-md'
+                        : 'border-[#E5E7EB] bg-white hover:border-[#C7D2FE] hover:bg-[#F9FAFB]'
+                    }
+                  `}
                 >
-                  <cat.icon className={`w-8 h-8 mb-2 ${value === cat.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`} />
-                  <span className="font-medium">{cat.label}</span>
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: isSelected ? '#EEF2FF' : '#F9FAFB' }}
+                  >
+                    <Icon
+                      className="w-6 h-6"
+                      style={{ color: isSelected ? '#4F46E5' : cat.color }}
+                    />
+                  </div>
+                  <span
+                    className={`text-[14px] font-semibold leading-tight ${
+                      isSelected ? 'text-[#4F46E5]' : 'text-[#374151]'
+                    }`}
+                  >
+                    {cat.label}
+                  </span>
                 </button>
-              ))}
-            </div>
-          )}
-        />
-        {errors.category && (
-          <p className="mt-1 text-sm text-red-500">{errors.category.message as string}</p>
+              );
+            })}
+          </div>
         )}
-      </div>
+      />
 
-      <div className="space-y-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Priority <span className="text-red-500">*</span>
-        </label>
-        <Controller
-          name="priority"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <div className="flex space-x-4">
-              {priorities.map((pri) => (
-                <button
-                  key={pri}
-                  type="button"
-                  onClick={() => onChange(pri)}
-                  className={`flex-1 py-3 px-4 rounded-lg border-2 text-center font-medium transition-colors ${
-                    value === pri
-                      ? pri === 'High'
-                        ? 'border-red-500 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-                        : pri === 'Medium'
-                        ? 'border-yellow-500 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400'
-                        : 'border-green-500 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                      : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                  }`}
-                >
-                  {pri}
-                </button>
-              ))}
-            </div>
-          )}
-        />
-        {errors.priority && (
-          <p className="mt-1 text-sm text-red-500">{errors.priority.message as string}</p>
-        )}
-      </div>
-    </motion.div>
+      {errors.category && (
+        <p className="text-[13px] font-semibold text-red-500">
+          {errors.category.message as string}
+        </p>
+      )}
+    </div>
   );
 }

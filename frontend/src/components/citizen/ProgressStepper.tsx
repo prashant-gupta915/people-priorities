@@ -4,49 +4,48 @@ import React from 'react';
 import { CheckIcon } from '@heroicons/react/24/solid';
 
 interface ProgressStepperProps {
-  currentStep: number;
+  currentStep: number; // 0-indexed
   steps: string[];
 }
 
-export default function ProgressStepper({ currentStep, steps: stepLabels }: ProgressStepperProps) {
-  const steps = stepLabels.map((label, i) => ({ id: i, label }));
-
+export default function ProgressStepper({ currentStep, steps }: ProgressStepperProps) {
   return (
-    <div className="w-full py-4">
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => {
-          const isCompleted = step.id < currentStep;
-          const isCurrent = step.id === currentStep;
+    <div className="w-full flex justify-center items-center py-4">
+      <div className="flex items-center gap-0">
+        {steps.map((label, index) => {
+          const isCompleted = index < currentStep;
+          const isCurrent = index === currentStep;
+          const isUpcoming = index > currentStep;
 
           return (
-            <div key={step.id} className="flex flex-col items-center relative flex-1">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 z-10 bg-white dark:bg-gray-900 transition-colors duration-300 ${
-                  isCompleted
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : isCurrent
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-gray-300 dark:border-gray-600 text-gray-400'
-                }`}
-              >
-                {isCompleted ? <CheckIcon className="w-6 h-6 text-white" /> : <span className="font-semibold">{step.id}</span>}
-              </div>
-              <span
-                className={`mt-2 text-xs font-medium text-center hidden sm:block ${
-                  isCompleted || isCurrent ? 'text-gray-900 dark:text-white' : 'text-gray-400'
-                }`}
-              >
-                {step.label}
-              </span>
-              {/* Connector Line */}
-              {index !== steps.length - 1 && (
+            <React.Fragment key={index}>
+              {/* Circle */}
+              <div className="flex flex-col items-center">
                 <div
-                  className={`absolute top-5 left-1/2 w-full h-0.5 -z-0 transition-colors duration-300 ${
-                    isCompleted ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
+                  className={`
+                    w-10 h-10 rounded-full flex items-center justify-center text-[15px] font-bold z-10 transition-all duration-300 shadow-sm
+                    ${isCompleted ? 'bg-[#10B981] text-white' : ''}
+                    ${isCurrent ? 'bg-[#4F46E5] text-white ring-4 ring-[#4F46E5]/20' : ''}
+                    ${isUpcoming ? 'bg-[#F3F4F6] text-[#9CA3AF] border border-[#E5E7EB]' : ''}
+                  `}
+                >
+                  {isCompleted ? (
+                    <CheckIcon className="w-5 h-5" />
+                  ) : (
+                    <span>{index + 1}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Connector line */}
+              {index < steps.length - 1 && (
+                <div
+                  className={`w-16 sm:w-24 h-0.5 mx-0 transition-colors duration-300 ${
+                    isCompleted ? 'bg-[#10B981]' : 'bg-[#E5E7EB]'
                   }`}
                 />
               )}
-            </div>
+            </React.Fragment>
           );
         })}
       </div>

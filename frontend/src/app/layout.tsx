@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,11 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PeoplePriority",
-  description: "PeoplePriority Application",
+  title: "PeoplePriority – AI Constituency Intelligence",
+  description:
+    "AI-powered platform connecting citizens with their representatives through intelligent analytics and real-time insights.",
 };
-
-import { Providers } from "./providers";
 
 export default function RootLayout({
   children,
@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full bg-gray-50">
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -4,119 +4,129 @@ import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import Step1BasicInfo from './Step1BasicInfo';
 import Step2Category from './Step2Category';
-import Step3Media from './Step3Media';
-import Step4Audio from './Step4Audio';
+import Step1BasicInfo from './Step1BasicInfo';
 import Step4Location from './Step4Location';
 import Step5Review from './Step5Review';
 import Step6Success from './Step6Success';
 import ProgressStepper from './ProgressStepper';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
 
+// Schema — title is auto-derived from description so we make it optional at the Zod level
+// and set it programmatically before submit
 const complaintSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.string().min(1, "Please select a category"),
-  priority: z.enum(['Low', 'Medium', 'High']),
+  title: z.string().optional(),
+  description: z.string().min(10, 'Please describe the issue in at least 10 characters'),
+  category: z.string().min(1, 'Please select a category'),
+  priority: z.enum(['Low', 'Medium', 'High']).optional(),
   images: z.array(z.any()).optional(),
   audio: z.any().optional(),
   location: z.object({ lat: z.number(), lng: z.number() }).optional(),
+  // flat fields from MapPicker (latitude/longitude used internally)
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  address: z.string().optional(),
 });
 
-type ComplaintForm = z.infer<typeof complaintSchema>;
+export type ComplaintForm = z.infer<typeof complaintSchema>;
 
-const Wizard = () => {
+// Step index → fields to validate before advancing
+const STEP_FIELDS: Array<Array<keyof ComplaintForm>> = [
+  ['category'],
+  ['description'],
+  [], // location optional
+  [], // review — no extra validation
+];
+
+const STEP_TITLES = ['Category', 'Describe', 'Location', 'Review'];
+
+export default function Wizard() {
   const methods = useForm<ComplaintForm>({
     resolver: zodResolver(complaintSchema),
     mode: 'onTouched',
     defaultValues: {
       images: [],
-    }
+      priority: 'Medium',
+    },
   });
 
   const [step, setStep] = useState(0);
 
-  const steps = [
-    <Step1BasicInfo key="step1" />,
-    <Step2Category key="step2" />,
-    <Step3Media key="step3" />,
-    <Step4Audio key="step4" />,
-    <Step4Location key="step5" />,
-    <Step5Review key="step6" />,
-    <Step6Success key="step7" />
+  const STEPS = [
+    <Step2Category key="cat" />,
+    <Step1BasicInfo key="info" />,
+    <Step4Location key="loc" />,
+    <Step5Review key="rev" />,
+    <Step6Success key="ok" />,
   ];
 
-  const stepTitles = [
-    "Basic Info",
-    "Category",
-    "Photos",
-    "Voice Note",
-    "Location",
-    "Review",
-    "Success"
-  ];
+  const isReview = step === STEPS.length - 2; // last real step = review
+  const isSuccess = step === STEPS.length - 1;
 
-  const isLast = step === steps.length - 2;
-  const isSuccess = step === steps.length - 1;
+  const advance = async () => {
+    const fields = STEP_FIELDS[step] ?? [];
+    const valid = fields.length === 0 || (await methods.trigger(fields));
+    if (valid && step < STEPS.length - 1) setStep(step + 1);
+  };
 
-  const handleNext = async () => {
-    let fieldsToValidate: Array<keyof ComplaintForm> = [];
-    if (step === 0) fieldsToValidate = ['title', 'description'];
-    if (step === 1) fieldsToValidate = ['category', 'priority'];
-    if (step === 2) fieldsToValidate = ['images'];
-    if (step === 3) fieldsToValidate = ['audio'];
-    if (step === 4) fieldsToValidate = ['location'];
-
-    const isStepValid = await methods.trigger(fieldsToValidate);
-    
-    if (isStepValid) {
-      if (step < steps.length - 1) {
-        setStep(step + 1);
-      }
+  const handleSubmit = methods.handleSubmit((data) => {
+    // auto-set title from description
+    if (!data.title) {
+      methods.setValue('title', data.description.slice(0, 60));
     }
-  };
-
-  const handleBack = () => {
-    if (step > 0) setStep(step - 1);
-  };
+    setStep(step + 1);
+  });
 
   return (
     <FormProvider {...methods}>
-      <div className="max-w-3xl mx-auto">
+      <div className="w-full">
+        {/* Stepper — hidden on success */}
         {!isSuccess && (
-          <div className="mb-8">
-            <ProgressStepper currentStep={step} steps={stepTitles.slice(0, 6)} />
-          </div>
+          <ProgressStepper currentStep={step} steps={STEP_TITLES} />
         )}
 
-        <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-          <AnimatePresence mode="wait">
-            {steps[step]}
-          </AnimatePresence>
+        {/* Card */}
+        <div className="bg-white rounded-[24px] shadow-sm border border-[#E5E7EB] overflow-hidden">
+          <div className="p-8 md:p-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -16 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+              >
+                {STEPS[step]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
+          {/* Footer buttons */}
           {!isSuccess && (
-            <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between px-8 md:px-10 pb-8 pt-2">
               <button
                 type="button"
-                onClick={handleBack}
-                disabled={step === 0}
-                className={`px-6 py-2.5 rounded-xl font-medium transition-colors ${
-                  step === 0
-                    ? 'opacity-0 cursor-default'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200'
+                onClick={() => setStep((s) => Math.max(0, s - 1))}
+                className={`px-6 py-3 rounded-full text-[15px] font-semibold border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB] transition ${
+                  step === 0 ? 'invisible' : ''
                 }`}
               >
                 Back
               </button>
-              
+
               <button
                 type="button"
-                onClick={isLast ? methods.handleSubmit(() => setStep(step + 1)) : handleNext}
-                className="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-sm transition-colors"
+                onClick={isReview ? handleSubmit : advance}
+                className="flex items-center gap-2 px-8 py-3 rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white text-[15px] font-semibold hover:opacity-90 transition shadow-sm"
               >
-                {isLast ? 'Submit Complaint' : 'Continue'}
+                {isReview ? 'Submit Complaint' : (
+                  <>
+                    Continue
+                    <ArrowRightIcon className="w-4 h-4" strokeWidth={2.5} />
+                  </>
+                )}
               </button>
             </div>
           )}
@@ -124,6 +134,4 @@ const Wizard = () => {
       </div>
     </FormProvider>
   );
-};
-
-export default Wizard;
+}

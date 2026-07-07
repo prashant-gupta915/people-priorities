@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { FaMicrophone, FaStop, FaPlay, FaPause, FaTrash } from 'react-icons/fa';
+import { MicrophoneIcon, StopIcon, PlayIcon, PauseIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface VoiceRecorderProps {
   onAudioRecorded: (file: File | null) => void;
@@ -22,7 +22,6 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
   useEffect(() => {
     if (initialAudio) {
       const url = URL.createObjectURL(initialAudio);
-      // eslint-disable-next-line
       setAudioUrl(url);
       return () => URL.revokeObjectURL(url);
     }
@@ -35,9 +34,7 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
       audioChunks.current = [];
 
       mediaRecorder.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.current.push(event.data);
-        }
+        if (event.data.size > 0) audioChunks.current.push(event.data);
       };
 
       mediaRecorder.current.onstop = () => {
@@ -51,13 +48,9 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
       mediaRecorder.current.start();
       setIsRecording(true);
       setRecordingTime(0);
-
-      timerRef.current = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
-    } catch (error) {
-      console.error("Error accessing microphone", error);
-      alert("Microphone access is required to record audio.");
+      timerRef.current = setInterval(() => setRecordingTime((p) => p + 1), 1000);
+    } catch {
+      alert('Microphone access is required to record audio.');
     }
   };
 
@@ -65,7 +58,7 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
     if (mediaRecorder.current && isRecording) {
       mediaRecorder.current.stop();
       setIsRecording(false);
-      mediaRecorder.current.stream.getTracks().forEach((track) => track.stop());
+      mediaRecorder.current.stream.getTracks().forEach((t) => t.stop());
       if (timerRef.current) clearInterval(timerRef.current);
     }
   };
@@ -87,50 +80,55 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
     setIsPlaying(!isPlaying);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  const formatTime = (s: number) =>
+    `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+
+  if (audioUrl) {
+    return (
+      <div className="flex items-center justify-between px-4 py-3.5 rounded-[16px] border border-[#E5E7EB] bg-white shadow-sm">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={togglePlayback}
+            className="w-8 h-8 flex items-center justify-center bg-[#EEF2FF] text-[#4F46E5] rounded-full hover:bg-[#E0E7FF] transition"
+          >
+            {isPlaying ? <PauseIcon className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
+          </button>
+          <span className="text-[14px] font-semibold text-[#111827]">Voice note recorded</span>
+        </div>
+        <button
+          type="button"
+          onClick={deleteRecording}
+          className="p-1.5 text-[#9CA3AF] hover:text-red-500 hover:bg-red-50 rounded-full transition"
+        >
+          <TrashIcon className="w-4 h-4" />
+        </button>
+        <audio ref={audioRef} src={audioUrl} onEnded={() => setIsPlaying(false)} className="hidden" />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800">
-      {!audioUrl ? (
-        <div className="flex flex-col items-center space-y-4">
-          <div className="text-4xl">
-            {isRecording ? (
-              <button onClick={stopRecording} className="p-4 bg-red-100 text-red-600 rounded-full hover:bg-red-200 animate-pulse transition">
-                <FaStop />
-              </button>
-            ) : (
-              <button onClick={startRecording} className="p-4 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition">
-                <FaMicrophone />
-              </button>
-            )}
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 font-medium">
-            {isRecording ? `Recording... ${formatTime(recordingTime)}` : "Click to Record Voice Note"}
-          </p>
-        </div>
+    <button
+      type="button"
+      onClick={isRecording ? stopRecording : startRecording}
+      className={`w-full flex items-center justify-center gap-2 py-4 px-5 rounded-[16px] border-2 border-dashed transition-all font-semibold text-[15px] ${
+        isRecording
+          ? 'border-red-400 bg-red-50 text-red-600 animate-pulse'
+          : 'border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#4F46E5] hover:text-[#4F46E5]'
+      }`}
+    >
+      {isRecording ? (
+        <>
+          <StopIcon className="w-5 h-5" />
+          <span>Stop · {formatTime(recordingTime)}</span>
+        </>
       ) : (
-        <div className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg shadow-sm">
-          <div className="flex items-center space-x-4">
-            <button onClick={togglePlayback} className="p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition">
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Recorded Audio</span>
-          </div>
-          <button onClick={deleteRecording} className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition">
-            <FaTrash />
-          </button>
-          <audio 
-            ref={audioRef} 
-            src={audioUrl} 
-            onEnded={() => setIsPlaying(false)}
-            className="hidden" 
-          />
-        </div>
+        <>
+          <MicrophoneIcon className="w-5 h-5" />
+          <span>Voice Upload</span>
+        </>
       )}
-    </div>
+    </button>
   );
 }
