@@ -35,6 +35,7 @@ class ComplaintUpdate(BaseModel):
     ai_summary: Optional[str] = None
     ai_category: Optional[str] = None
     severity: Optional[float] = None
+    language: Optional[str] = None
 
 class ComplaintDB(ComplaintBase):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -43,6 +44,7 @@ class ComplaintDB(ComplaintBase):
     ai_summary: Optional[str] = None
     ai_category: Optional[str] = None
     severity: Optional[float] = None
+    language: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     

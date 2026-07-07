@@ -22,6 +22,7 @@ export default function VoiceRecorder({ onAudioRecorded, initialAudio }: VoiceRe
   useEffect(() => {
     if (initialAudio) {
       const url = URL.createObjectURL(initialAudio);
+      // eslint-disable-next-line
       setAudioUrl(url);
       return () => URL.revokeObjectURL(url);
     }

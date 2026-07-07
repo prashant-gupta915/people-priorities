@@ -4,7 +4,7 @@ import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer, 
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-export default function PieChart({ data }: { data: any[] }) {
+export default function PieChart({ data }: { data: Array<{ name: string; complaints: number }> }) {
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Distribution</h3>

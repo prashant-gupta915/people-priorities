@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     # CORS setup
     CORS_ORIGINS: list[str] = ["*"] # Configure appropriately for production
     
+    # AI Settings
+    GEMINI_API_KEY: str = ""
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

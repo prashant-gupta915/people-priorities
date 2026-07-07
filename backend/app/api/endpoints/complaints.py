@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, HTTPException, status, Query, BackgroundTasks
 from app.schemas.complaint import ComplaintCreate, ComplaintUpdate, ComplaintResponse, ComplaintListResponse
 from app.services import complaint as complaint_service
+from app.services.ai_service import ai_service
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,9 +9,16 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("", response_model=ComplaintResponse, status_code=status.HTTP_201_CREATED)
-async def create_complaint(complaint: ComplaintCreate):
+async def create_complaint(complaint: ComplaintCreate, background_tasks: BackgroundTasks):
     try:
         created_complaint = await complaint_service.create_complaint(complaint)
+        # Trigger background AI processing
+        background_tasks.add_task(
+            ai_service.process_complaint_async,
+            complaint_id=str(created_complaint.id),
+            title=created_complaint.title,
+            description=created_complaint.description
+        )
         return created_complaint
     except Exception as e:
         logger.error(f"Error creating complaint: {e}")

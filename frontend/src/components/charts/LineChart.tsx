@@ -2,7 +2,7 @@
 import React from 'react';
 import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function LineChart({ data }: { data: any[] }) {
+export default function LineChart({ data }: { data: Array<{ name: string; complaints: number }> }) {
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Trend Over Time</h3>

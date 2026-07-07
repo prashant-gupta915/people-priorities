@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { MagnifyingGlassIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 export default function Header() {

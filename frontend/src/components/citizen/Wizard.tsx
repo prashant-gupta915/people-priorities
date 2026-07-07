@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 import Step1BasicInfo from './Step1BasicInfo';
 import Step2Category from './Step2Category';
@@ -62,14 +62,14 @@ const Wizard = () => {
   const isSuccess = step === steps.length - 1;
 
   const handleNext = async () => {
-    let fieldsToValidate: any[] = [];
+    let fieldsToValidate: Array<keyof ComplaintForm> = [];
     if (step === 0) fieldsToValidate = ['title', 'description'];
     if (step === 1) fieldsToValidate = ['category', 'priority'];
     if (step === 2) fieldsToValidate = ['images'];
     if (step === 3) fieldsToValidate = ['audio'];
     if (step === 4) fieldsToValidate = ['location'];
 
-    const isStepValid = await methods.trigger(fieldsToValidate as any);
+    const isStepValid = await methods.trigger(fieldsToValidate);
     
     if (isStepValid) {
       if (step < steps.length - 1) {

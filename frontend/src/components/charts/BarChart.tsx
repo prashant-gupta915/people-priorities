@@ -2,7 +2,7 @@
 import React from 'react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function BarChart({ data }: { data: any[] }) {
+export default function BarChart({ data }: { data: Array<{ name: string; complaints: number }> }) {
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Complaints by Month</h3>
