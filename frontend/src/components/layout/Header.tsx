@@ -1,6 +1,7 @@
 "use client";
 import { MagnifyingGlassIcon, BellIcon, CpuChipIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { useCopilot } from '@/context/CopilotContext';
 
 export default function Header() {
@@ -14,6 +15,7 @@ export default function Header() {
   else if (pathname?.includes('/projects')) title = 'Projects & Monitoring';
   else if (pathname?.includes('/reports')) title = 'Reports & Analytics';
   else if (pathname?.includes('/alerts')) title = 'Alerts & Notifications';
+  else if (pathname?.includes('/profile')) title = 'MP Profile';
 
   return (
     <header className="sticky top-0 z-20 flex flex-shrink-0 h-[60px] items-center justify-between bg-white px-6 border-b border-[#E5E7EB]" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -62,9 +64,9 @@ export default function Header() {
         </button>
 
         {/* Avatar */}
-        <button className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-bold text-[13px] hover:opacity-90 shadow-sm transition-opacity">
+        <Link href="/profile" className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-bold text-[13px] hover:opacity-90 shadow-sm transition-opacity">
           SV
-        </button>
+        </Link>
       </div>
     </header>
   );
