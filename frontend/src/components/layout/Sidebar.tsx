@@ -91,15 +91,15 @@ export default function Sidebar() {
         </div>
 
         {/* User Profile */}
-        <div className="flex items-center gap-3 px-1">
-          <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-bold text-sm shadow-sm flex-shrink-0">
+        <Link href="/profile" className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-[#F9FAFB] transition-colors group cursor-pointer -mx-1">
+          <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-bold text-sm shadow-sm flex-shrink-0 group-hover:opacity-90 transition-opacity">
             SV
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-bold text-[#111827] truncate">Secretary Verma</p>
+            <p className="text-[13px] font-bold text-[#111827] truncate group-hover:text-[#4F46E5] transition-colors">Secretary Verma</p>
             <p className="text-[11px] font-medium text-[#6B7280] truncate">Rampur West MLA</p>
           </div>
-        </div>
+        </Link>
       </div>
     </nav>
   );

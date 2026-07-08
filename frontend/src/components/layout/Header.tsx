@@ -1,15 +1,18 @@
 "use client";
-import { MagnifyingGlassIcon, BellIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, BellIcon, CpuChipIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
+import { useCopilot } from '@/context/CopilotContext';
 
 export default function Header() {
   const pathname = usePathname();
+  const { isOpen, toggle } = useCopilot();
+
   let title = 'Command Center';
   if (pathname?.includes('/citizen')) title = 'Citizen Portal';
   else if (pathname?.includes('/intelligence')) title = 'Intelligence Map';
   else if (pathname?.includes('/recommendations')) title = 'AI Recommendations';
   else if (pathname?.includes('/projects')) title = 'Projects & Monitoring';
-  else if (pathname?.includes('/reports')) title = 'Reports';
+  else if (pathname?.includes('/reports')) title = 'Reports & Analytics';
   else if (pathname?.includes('/alerts')) title = 'Alerts & Notifications';
 
   return (
@@ -29,7 +32,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Right: AI Active + Bell + Avatar */}
+      {/* Right actions */}
       <div className="flex items-center gap-3 flex-shrink-0">
         {/* AI Active pill */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-sm">
@@ -43,6 +46,19 @@ export default function Header() {
           <span className="absolute top-0 right-0 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold ring-2 ring-white">
             3
           </span>
+        </button>
+
+        {/* AI Copilot toggle */}
+        <button
+          onClick={toggle}
+          title={isOpen ? 'Hide AI Copilot' : 'Show AI Copilot'}
+          className={`relative flex items-center justify-center h-9 w-9 rounded-full transition-all border shadow-sm ${
+            isOpen
+              ? 'bg-[#4F46E5] text-white border-[#4F46E5] hover:bg-[#4338CA]'
+              : 'bg-white text-[#6B7280] border-[#E5E7EB] hover:bg-[#EEF2FF] hover:text-[#4F46E5] hover:border-[#4F46E5]'
+          }`}
+        >
+          <CpuChipIcon className="h-5 w-5" />
         </button>
 
         {/* Avatar */}

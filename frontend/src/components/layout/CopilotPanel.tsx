@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SparklesIcon, CpuChipIcon, PaperAirplaneIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useCopilot } from "@/context/CopilotContext";
 
 const SYSTEM_CONTEXT = `You are an AI Copilot for PeoplePriority — an AI Constituency Intelligence OS for elected representatives.
 Context: You are assisting Secretary Verma, MLA of Rampur West. 
@@ -36,10 +38,10 @@ interface Message {
 }
 
 export default function CopilotPanel() {
+  const { isOpen } = useCopilot();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -110,7 +112,17 @@ export default function CopilotPanel() {
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-[300px] flex-shrink-0 h-screen bg-[#F9FAFB] border-l border-[#E5E7EB]">
+    <AnimatePresence>
+      {isOpen && (
+    <motion.aside
+      key="copilot"
+      initial={{ width: 0, opacity: 0 }}
+      animate={{ width: 300, opacity: 1 }}
+      exit={{ width: 0, opacity: 0 }}
+      transition={{ duration: 0.25, ease: "easeInOut" }}
+      className="hidden lg:flex flex-col flex-shrink-0 h-screen bg-[#F9FAFB] border-l border-[#E5E7EB] overflow-hidden"
+      style={{ minWidth: 0 }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-3">
@@ -243,6 +255,8 @@ export default function CopilotPanel() {
         </div>
         <p className="text-[10px] text-[#9CA3AF] text-center mt-2">Press Enter to send · Shift+Enter for new line</p>
       </div>
-    </aside>
+    </motion.aside>
+      )}
+    </AnimatePresence>
   );
 }
