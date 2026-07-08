@@ -1,6 +1,12 @@
 /* src/app/globals.css */
 @import "leaflet/dist/leaflet.css";
 
+/* Fix Leaflet marker icon 404s in Next.js — override broken relative image paths */
+.leaflet-default-icon-path {
+  background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png');
+}
+
+
 @import "tailwindcss";
 
 @theme {

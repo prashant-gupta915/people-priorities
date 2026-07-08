@@ -13,33 +13,40 @@ export default function Header() {
   else if (pathname?.includes('/alerts')) title = 'Alerts & Notifications';
 
   return (
-    <header className="flex flex-shrink-0 items-center justify-between bg-white px-6 py-3 border-b border-[#E5E7EB]">
-      <div className="flex items-center">
-        <h1 className="text-lg font-semibold text-[#111827]">{title}</h1>
-      </div>
-      <div className="flex items-center space-x-5">
-        <div className="relative flex items-center">
-          <MagnifyingGlassIcon className="absolute left-3 h-4 w-4 text-[#6B7280]" />
+    <header className="sticky top-0 z-20 flex flex-shrink-0 h-[60px] items-center justify-between bg-white px-6 border-b border-[#E5E7EB]" style={{ fontFamily: 'Inter, sans-serif' }}>
+      {/* Page Title */}
+      <h1 className="text-[17px] font-bold text-[#111827] tracking-tight whitespace-nowrap">{title}</h1>
+
+      {/* Center: Search */}
+      <div className="flex-1 flex justify-center px-8 max-w-2xl mx-auto">
+        <div className="relative w-full max-w-[500px]">
+          <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
           <input
             type="text"
             placeholder="Search complaints, projects, schemes..."
-            className="pl-9 pr-4 py-2 w-72 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] text-sm focus:outline-none focus:ring-1 focus:ring-[#4F46E5] placeholder-[#6B7280]"
+            className="w-full pl-10 pr-4 py-2 h-9 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] text-[13px] font-medium text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30 focus:border-[#4F46E5] placeholder-[#9CA3AF] transition-all"
           />
         </div>
-        
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+      </div>
+
+      {/* Right: AI Active + Bell + Avatar */}
+      <div className="flex items-center gap-3 flex-shrink-0">
+        {/* AI Active pill */}
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-sm">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-semibold text-emerald-600 tracking-wide">AI Active</span>
+          <span className="text-[12px] font-semibold text-[#111827]">AI Active</span>
         </div>
 
-        <button className="relative p-2 rounded-full text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]">
+        {/* Bell */}
+        <button className="relative flex items-center justify-center h-9 w-9 rounded-full text-[#6B7280] hover:bg-[#F3F4F6] transition-colors border border-[#E5E7EB]">
           <BellIcon className="h-5 w-5" />
-          <span className="absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold text-center leading-4 ring-2 ring-white">
+          <span className="absolute top-0 right-0 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold ring-2 ring-white">
             3
           </span>
         </button>
 
-        <button className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-semibold text-sm hover:opacity-90">
+        {/* Avatar */}
+        <button className="flex items-center justify-center h-9 w-9 rounded-full bg-[#4F46E5] text-white font-bold text-[13px] hover:opacity-90 shadow-sm transition-opacity">
           SV
         </button>
       </div>

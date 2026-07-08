@@ -56,29 +56,26 @@ export default function HeatmapComponent() {
     : defaultPosition;
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 col-span-1 md:col-span-2">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Complaint Locations</h3>
-      <div className="h-96 rounded overflow-hidden">
-        <MapContainer center={center} zoom={10} style={{ height: '100%', width: '100%' }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <MarkerClusterGroup chunkedLoading>
-            {heatmapData?.map((point, index) => (
-              <Marker key={index} position={[point.latitude, point.longitude]}>
-                <Popup>
-                  <div>
-                    <strong>Category:</strong> {point.category}<br />
-                    <strong>Priority:</strong> {point.priority}<br />
-                    <strong>Status:</strong> {point.status}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
-        </MapContainer>
-      </div>
+    <div className="h-full w-full">
+      <MapContainer center={center} zoom={10} style={{ height: '100%', width: '100%' }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MarkerClusterGroup chunkedLoading>
+          {heatmapData?.map((point, index) => (
+            <Marker key={index} position={[point.latitude, point.longitude]}>
+              <Popup>
+                <div>
+                  <strong>Category:</strong> {point.category}<br />
+                  <strong>Priority:</strong> {point.priority}<br />
+                  <strong>Status:</strong> {point.status}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
+      </MapContainer>
     </div>
   );
 }
